@@ -34,7 +34,6 @@ public class Ball {
         public static SimpleData.Key<UUID> TARGET_ENTITY_UUID_DEBUG = new SimpleData.Key<>("db", "target_uuid_debug", DataType.UUID);
         public static SimpleData.Key<UUID> TARGET_ENTITY_UUID = new SimpleData.Key<>("db", "target_uuid", DataType.UUID);
         public static SimpleData.Key<Vector> TARGET_LOCATION = new SimpleData.Key<>("db", "target_location", DataType.VECTOR);
-
     }
 
     public static boolean isBall(Entity e) {
@@ -127,13 +126,14 @@ public class Ball {
     // and Minecraft runs at 20 tps. This means that the algorithm is run 3 times and interpolated by .1 on the
     // 4th iteration. The actual in game velocity is set according to the simulated position subtracted by the current
     // position.
+
+    // TODO: Calculations for reflections, namely speed/turn increases
     public static void performHoming(WindCharge ballEntity, double timeDelta) {
         double maxSpeedScaled = SimpleData.get(ballEntity, Keys.MAX_SPEED) * SIMULATED_TICK_DURATION;
         double turnFactor = SimpleData.get(ballEntity, Keys.TURN_FACTOR) / TURN_RATE_MODIFIER;
         Vector currentDirection = SimpleData.get(ballEntity, Keys.DIRECTION_VEC);
         Vector currentPosition = ballEntity.getLocation().toVector();
         Vector destination = getDestination(ballEntity);
-        int i = 0;
 
         if (destination == null)
             return;
@@ -145,7 +145,6 @@ public class Ball {
             currentDirection = lerpVectors(currentDirection, newDirection, deltaScale);
             currentPosition = currentPosition.add(currentDirection.clone().multiply(maxSpeedScaled).multiply(deltaScale));
             timeDelta -= SIMULATED_TICK_DURATION;
-            i++;
         }
 
         ballEntity.setVelocity(currentPosition.subtract(ballEntity.getLocation().toVector()));
@@ -158,6 +157,7 @@ public class Ball {
 
         performHoming(ballEntity, MINECRAFT_TICK_DURATION);
 
+        // TODO: Send spawn particle packets instead of using World#spawnParticle
         Color particleColor = Color.fromRGB(255, 0, 0);
         Particle.DustOptions dustOptions = new Particle.DustOptions(particleColor, 1.5F);
         ballEntity.getWorld().spawnParticle(Particle.DUST, ballEntity.getLocation(), 1, 0, 0, 0, 0, dustOptions);
