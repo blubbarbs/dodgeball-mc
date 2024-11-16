@@ -1,21 +1,19 @@
-package com.gmail.blubberalls.dodgeball;
+package com.gmail.blubberalls.tf2;
 
 import com.gmail.blubberalls.simpledata.SD;
 import com.jeff_media.morepersistentdatatypes.DataType;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.WindCharge;
+import org.bukkit.event.Listener;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.UUID;
 
-public class Ball {
+public class Dodgeball implements Listener {
     public static final double MINECRAFT_TPS = 20;
     public static final double MINECRAFT_TICK_DURATION = 1.0 / MINECRAFT_TPS;
     public static final double SIMULATED_TPS = 66;
@@ -161,6 +159,12 @@ public class Ball {
         Color particleColor = Color.fromRGB(255, 0, 0);
         Particle.DustOptions dustOptions = new Particle.DustOptions(particleColor, 1.5F);
         ballEntity.getWorld().spawnParticle(Particle.DUST, ballEntity.getLocation(), 1, 0, 0, 0, 0, dustOptions);
+    }
+
+    public static void tickAll() {
+        for (World world : Bukkit.getWorlds()) {
+            world.getEntitiesByClass(WindCharge.class).forEach(Dodgeball::tick);
+        }
     }
 
     private static Vector rotateVectors(Vector a, Vector b, double percentage) {

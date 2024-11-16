@@ -75,24 +75,6 @@ public class InputListener implements Listener {
             return null;
     }
 
-    public PlayerHoldInputEvent createHoldEvent(Player player, Input previousInput, Input newInput) {
-        CustomInput changedInput = new CustomInput();
-
-        changedInput.forward = previousInput.isForward() && newInput.isForward();
-        changedInput.backward = previousInput.isBackward() && newInput.isBackward();
-        changedInput.left = previousInput.isLeft() && newInput.isLeft();
-        changedInput.right = previousInput.isRight() && newInput.isRight();
-        changedInput.jump = previousInput.isJump() && newInput.isJump();
-        changedInput.sneak = previousInput.isSneak() && newInput.isSneak();
-        changedInput.sprint = previousInput.isSneak() && newInput.isSprint();
-
-        if (changedInput.isValid()) {
-            return new PlayerHoldInputEvent(player, newInput, changedInput);
-        }
-        else
-            return null;
-    }
-
     public PlayerReleaseInputEvent createReleaseEvent(Player player, Input previousInput, Input newInput) {
         CustomInput changedInput = new CustomInput();
 
@@ -111,18 +93,6 @@ public class InputListener implements Listener {
             return null;
     }
 
-    public void printInput(Input input) {
-        Bukkit.getLogger().info(
-                "UP: " + input.isForward()
-                + " DOWN: " + input.isBackward()
-                + " LEFT: " + input.isLeft()
-                + " RIGHT: " + input.isRight()
-                + " JUMP: " + input.isJump()
-                + " SHIFT: " + input.isSneak()
-                + " SPRINT: " + input.isSprint()
-        );
-    }
-
     @EventHandler
     public void onInput(PlayerInputEvent event) {
         Input previousInput = event.getPlayer().getCurrentInput();
@@ -136,10 +106,6 @@ public class InputListener implements Listener {
         PlayerPressInputEvent pressEvent = createPressEvent(event.getPlayer(), previousInput, event.getInput());
         if (pressEvent != null)
             Bukkit.getPluginManager().callEvent(pressEvent);
-
-        PlayerHoldInputEvent holdEvent = createHoldEvent(event.getPlayer(), previousInput, event.getInput());
-        if (holdEvent != null)
-            Bukkit.getPluginManager().callEvent(holdEvent);
 
         PlayerReleaseInputEvent releaseEvent = createReleaseEvent(event.getPlayer(), previousInput, event.getInput());
         if (releaseEvent != null)

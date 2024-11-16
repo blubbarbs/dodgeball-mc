@@ -1,5 +1,5 @@
-name: Dodgeball
+name: TF2
 version: '${version}'
-main: com.gmail.blubberalls.dodgeball.Dodgeball
+main: com.gmail.blubberalls.tf2.TF2
 api-version: '1.21'
-description: Plugin based off TF2's popular Dodgeball game
+description: Plugin to test various TF2 things in Minecraft

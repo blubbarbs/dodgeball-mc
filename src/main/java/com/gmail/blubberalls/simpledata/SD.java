@@ -26,8 +26,8 @@ public class SD {
             this.pdType = pdType;
         }
 
-        public Key(String key, String namespace, PersistentDataType<?, T> pdType) {
-            this(new NamespacedKey("pd", namespace), pdType);
+        public Key(String namespace, String key, PersistentDataType<?, T> pdType) {
+            this(new NamespacedKey(namespace, key), pdType);
         }
 
         public Key(String key, PersistentDataType<?, T> pdType) {
