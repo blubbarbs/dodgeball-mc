@@ -9,8 +9,15 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerPressInputEvent extends PlayerInputEvent {
     private static final HandlerList handlers = new HandlerList();
 
-    public PlayerPressInputEvent(@NotNull Player player, @NotNull Input input) {
+    private Input changedInput;
+
+    public PlayerPressInputEvent(@NotNull Player player, @NotNull Input input, @NotNull Input changedInput) {
         super(player, input);
+        this.changedInput = changedInput;
+    }
+
+    public Input getChangedInput() {
+        return changedInput;
     }
 
     public HandlerList getHandlers() {

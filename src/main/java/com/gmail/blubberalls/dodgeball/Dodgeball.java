@@ -78,19 +78,16 @@ public final class Dodgeball extends JavaPlugin implements Listener {
     }
 
 
-    public void doubleJump(Player player) {
-        Input playerInput = player.getCurrentInput();
+    public void doubleJump(Player player, Input currentInput) {
         Vector playerDirection = player.getEyeLocation().getDirection().normalize();
         playerDirection.setY(0);
         int x = 0;
         int z = 0;
 
-        Bukkit.getLogger().info("FORWARD: " + playerInput.isForward() + " BACKWARD: " + playerInput.isBackward() + " LEFT: " + playerInput.isLeft() + " RIGHT: " + playerInput.isRight());
-
-        x -= playerInput.isRight() ? 1 : 0;
-        x += playerInput.isLeft() ? 1 : 0;
-        z += playerInput.isForward() ? 1 : 0;
-        z -= playerInput.isBackward() ? 1 : 0;
+        x -= currentInput.isRight() ? 1 : 0;
+        x += currentInput.isLeft() ? 1 : 0;
+        z += currentInput.isForward() ? 1 : 0;
+        z -= currentInput.isBackward() ? 1 : 0;
 
         double angle = 0;
 
@@ -110,7 +107,7 @@ public final class Dodgeball extends JavaPlugin implements Listener {
                 angle = 180;
             }
             else if (z == 0) {
-                angle = 0;
+                angle = -1;
             }
             else if (z == 1) {
                 angle = 0;
@@ -128,16 +125,18 @@ public final class Dodgeball extends JavaPlugin implements Listener {
             }
         }
 
-        System.out.println("ANGLE: " + angle);
-
-        Vector rotated = playerDirection.rotateAroundY(Math.toRadians(angle)).multiply(.5).setY(.5);
-        player.setVelocity(rotated);
+        if (angle >= 0) {
+            player.setVelocity(playerDirection.rotateAroundY(Math.toRadians(angle)).multiply(.5).setY(.5));
+        }
+        else {
+            player.setVelocity(player.getVelocity().setY(.5));
+        }
     }
 
     @EventHandler
     public void onPlayerPress(PlayerPressInputEvent event) {
-        if (event.getInput().isJump() && !event.getPlayer().isOnGround() && event.getPlayer().getVelocity().getY() < 0) {
-            doubleJump(event.getPlayer());
+        if (event.getChangedInput().isJump() && !event.getPlayer().isOnGround() && event.getPlayer().getVelocity().getY() < 0) {
+            doubleJump(event.getPlayer(), event.getInput());
         }
     }
 
