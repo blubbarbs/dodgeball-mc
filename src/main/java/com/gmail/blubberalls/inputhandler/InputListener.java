@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInputEvent;
 
-import java.util.HashMap;
-
 public class InputListener implements Listener {
     private class CustomInput implements Input {
         public boolean forward = false;
@@ -57,12 +55,6 @@ public class InputListener implements Listener {
         public boolean isValid() {
             return forward || backward || left || right || jump || sneak || sprint;
         }
-    }
-
-    private final HashMap<Player, Input> currentInputMap = new HashMap<>();
-
-    public Input getPlayerCurrentInput(Player player) {
-        return currentInputMap.get(player);
     }
 
     public PlayerPressInputEvent createPressEvent(Player player, Input previousInput, Input newInput) {
@@ -121,8 +113,7 @@ public class InputListener implements Listener {
 
     @EventHandler
     public void onInput(PlayerInputEvent event) {
-        Input previousInput = currentInputMap.get(event.getPlayer());
-        currentInputMap.put(event.getPlayer(), event.getInput());
+        Input previousInput = event.getPlayer().getCurrentInput();
 
         if (previousInput == null) {
             PlayerPressInputEvent pressEvent = new PlayerPressInputEvent(event.getPlayer(), event.getInput());

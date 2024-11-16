@@ -2,7 +2,6 @@ package com.gmail.blubberalls.dodgeball;
 
 import com.gmail.blubberalls.inputhandler.InputListener;
 import com.gmail.blubberalls.inputhandler.PlayerPressInputEvent;
-import com.gmail.blubberalls.inputhandler.PlayerReleaseInputEvent;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -80,7 +79,7 @@ public final class Dodgeball extends JavaPlugin implements Listener {
 
 
     public void doubleJump(Player player) {
-        Input playerInput = INPUT_HANDLER.getPlayerCurrentInput(player);
+        Input playerInput = player.getCurrentInput();
         Vector playerDirection = player.getEyeLocation().getDirection().normalize();
         playerDirection.setY(0);
         int x = 0;
