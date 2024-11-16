@@ -1,5 +1,5 @@
 name: Dodgeball
 version: '${version}'
 main: com.gmail.blubberalls.dodgeball.Dodgeball
-api-version: '1.20'
+api-version: '1.21'
 description: Plugin based off TF2's popular Dodgeball game

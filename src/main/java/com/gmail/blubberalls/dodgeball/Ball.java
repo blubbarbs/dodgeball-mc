@@ -1,6 +1,6 @@
 package com.gmail.blubberalls.dodgeball;
 
-import com.gmail.blubberalls.simpledata.SimpleData;
+import com.gmail.blubberalls.simpledata.SD;
 import com.jeff_media.morepersistentdatatypes.DataType;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -28,45 +28,45 @@ public class Ball {
     }
 
     public static class Keys {
-        public static SimpleData.Key<Vector> DIRECTION_VEC = new SimpleData.Key<>("db", "__direction", DataType.VECTOR);
-        public static SimpleData.Key<Double> TURN_FACTOR = new SimpleData.Key<>("db", "turn_factor", PersistentDataType.DOUBLE);
-        public static SimpleData.Key<Double> MAX_SPEED = new SimpleData.Key<>("db", "max_speed", PersistentDataType.DOUBLE);
-        public static SimpleData.Key<UUID> TARGET_ENTITY_UUID_DEBUG = new SimpleData.Key<>("db", "target_uuid_debug", DataType.UUID);
-        public static SimpleData.Key<UUID> TARGET_ENTITY_UUID = new SimpleData.Key<>("db", "target_uuid", DataType.UUID);
-        public static SimpleData.Key<Vector> TARGET_LOCATION = new SimpleData.Key<>("db", "target_location", DataType.VECTOR);
+        public static SD.Key<Vector> DIRECTION_VEC = new SD.Key<>("db", "__direction", DataType.VECTOR);
+        public static SD.Key<Double> TURN_FACTOR = new SD.Key<>("db", "turn_factor", PersistentDataType.DOUBLE);
+        public static SD.Key<Double> MAX_SPEED = new SD.Key<>("db", "max_speed", PersistentDataType.DOUBLE);
+        public static SD.Key<UUID> TARGET_ENTITY_UUID_DEBUG = new SD.Key<>("db", "target_uuid_debug", DataType.UUID);
+        public static SD.Key<UUID> TARGET_ENTITY_UUID = new SD.Key<>("db", "target_uuid", DataType.UUID);
+        public static SD.Key<Vector> TARGET_LOCATION = new SD.Key<>("db", "target_location", DataType.VECTOR);
     }
 
     public static boolean isBall(Entity e) {
-        return SimpleData.has(e, Keys.TURN_FACTOR);
+        return SD.has(e, Keys.TURN_FACTOR);
     }
 
     public static WindCharge spawn(Location location) {
         WindCharge ballEntity = location.getWorld().spawn(location, WindCharge.class);
         ballEntity.setNoPhysics(true);
         ballEntity.setPower(new Vector(0, 0, 0));
-        SimpleData.set(ballEntity, Keys.DIRECTION_VEC, new Vector(1, 0, 0));
-        SimpleData.set(ballEntity, Keys.MAX_SPEED, Defaults.MAX_SPEED);
-        SimpleData.set(ballEntity, Keys.TURN_FACTOR, Defaults.TURN_FACTOR);
+        SD.set(ballEntity, Keys.DIRECTION_VEC, new Vector(1, 0, 0));
+        SD.set(ballEntity, Keys.MAX_SPEED, Defaults.MAX_SPEED);
+        SD.set(ballEntity, Keys.TURN_FACTOR, Defaults.TURN_FACTOR);
 
         return ballEntity;
     }
 
     public static void setTargetEntity(WindCharge ballEntity, LivingEntity entity) {
-        SimpleData.set(ballEntity, Keys.TARGET_ENTITY_UUID, entity.getUniqueId());
-        SimpleData.remove(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG);
-        SimpleData.remove(ballEntity, Keys.TARGET_LOCATION);
+        SD.set(ballEntity, Keys.TARGET_ENTITY_UUID, entity.getUniqueId());
+        SD.remove(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG);
+        SD.remove(ballEntity, Keys.TARGET_LOCATION);
     }
 
     public static void setTargetEntityDebug(WindCharge ballEntity, LivingEntity entity) {
-        SimpleData.remove(ballEntity, Keys.TARGET_ENTITY_UUID);
-        SimpleData.set(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG, entity.getUniqueId());
-        SimpleData.remove(ballEntity, Keys.TARGET_LOCATION);
+        SD.remove(ballEntity, Keys.TARGET_ENTITY_UUID);
+        SD.set(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG, entity.getUniqueId());
+        SD.remove(ballEntity, Keys.TARGET_LOCATION);
     }
 
     public static void setTargetLocation(WindCharge ballEntity, Vector location) {
-        SimpleData.remove(ballEntity, Keys.TARGET_ENTITY_UUID);
-        SimpleData.remove(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG);
-        SimpleData.set(ballEntity, Keys.TARGET_LOCATION, location);
+        SD.remove(ballEntity, Keys.TARGET_ENTITY_UUID);
+        SD.remove(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG);
+        SD.set(ballEntity, Keys.TARGET_LOCATION, location);
     }
 
     public static void setTargetLocation(WindCharge ballEntity, Location location) {
@@ -74,18 +74,18 @@ public class Ball {
     }
 
     public static void setTurnFactor(WindCharge ballEntity, double turnFactor) {
-        SimpleData.set(ballEntity, Keys.TURN_FACTOR, turnFactor);
+        SD.set(ballEntity, Keys.TURN_FACTOR, turnFactor);
     }
 
     public static void setMaxSpeed(WindCharge ballEntity, double speed) {
-        SimpleData.set(ballEntity, Keys.MAX_SPEED, speed);
+        SD.set(ballEntity, Keys.MAX_SPEED, speed);
     }
 
     public static Vector getDestination(WindCharge ballEntity) {
-        if (SimpleData.has(ballEntity, Keys.TARGET_LOCATION)) {
-            return SimpleData.get(ballEntity, Keys.TARGET_LOCATION);
-        } else if (SimpleData.has(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG)) {
-            Entity e = Bukkit.getEntity(SimpleData.get(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG));
+        if (SD.has(ballEntity, Keys.TARGET_LOCATION)) {
+            return SD.get(ballEntity, Keys.TARGET_LOCATION);
+        } else if (SD.has(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG)) {
+            Entity e = Bukkit.getEntity(SD.get(ballEntity, Keys.TARGET_ENTITY_UUID_DEBUG));
 
             if (e == null || e.isDead() || !(e instanceof LivingEntity livingE))
                 return null;
@@ -99,8 +99,8 @@ public class Ball {
 
             return targetLocation;
         }
-        else if (SimpleData.has(ballEntity, Keys.TARGET_ENTITY_UUID)) {
-            Entity e = Bukkit.getEntity(SimpleData.get(ballEntity, Keys.TARGET_ENTITY_UUID));
+        else if (SD.has(ballEntity, Keys.TARGET_ENTITY_UUID)) {
+            Entity e = Bukkit.getEntity(SD.get(ballEntity, Keys.TARGET_ENTITY_UUID));
 
             if (e == null || e.isDead() || !(e instanceof LivingEntity livingE))
                 return null;
@@ -129,9 +129,9 @@ public class Ball {
 
     // TODO: Calculations for reflections, namely speed/turn increases
     public static void performHoming(WindCharge ballEntity, double timeDelta) {
-        double maxSpeedScaled = SimpleData.get(ballEntity, Keys.MAX_SPEED) * SIMULATED_TICK_DURATION;
-        double turnFactor = SimpleData.get(ballEntity, Keys.TURN_FACTOR) / TURN_RATE_MODIFIER;
-        Vector currentDirection = SimpleData.get(ballEntity, Keys.DIRECTION_VEC);
+        double maxSpeedScaled = SD.get(ballEntity, Keys.MAX_SPEED) * SIMULATED_TICK_DURATION;
+        double turnFactor = SD.get(ballEntity, Keys.TURN_FACTOR) / TURN_RATE_MODIFIER;
+        Vector currentDirection = SD.get(ballEntity, Keys.DIRECTION_VEC);
         Vector currentPosition = ballEntity.getLocation().toVector();
         Vector destination = getDestination(ballEntity);
 
@@ -148,7 +148,7 @@ public class Ball {
         }
 
         ballEntity.setVelocity(currentPosition.subtract(ballEntity.getLocation().toVector()));
-        SimpleData.set(ballEntity, Keys.DIRECTION_VEC, currentDirection);
+        SD.set(ballEntity, Keys.DIRECTION_VEC, currentDirection);
     }
 
     public static void tick(WindCharge ballEntity) {
