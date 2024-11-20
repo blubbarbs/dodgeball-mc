@@ -1,6 +1,5 @@
 package com.gmail.blubberalls.tf2;
 
-import com.gmail.blubberalls.inputhandler.PlayerPressInputEvent;
 import com.gmail.blubberalls.simpledata.SD;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -8,6 +7,7 @@ import org.bukkit.Input;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInputEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 
@@ -99,25 +99,29 @@ public class DoubleJump implements Listener {
     }
 
     @EventHandler
-    public void onPlayerPress(PlayerPressInputEvent event) {
-        if (!event.getChangedInput().isJump()
-                || event.getPlayer().isFlying()
-                || event.getPlayer().getGameMode() == GameMode.CREATIVE
-                || event.getPlayer().getGameMode() == GameMode.SPECTATOR)
+    public void onPlayerInput(PlayerInputEvent event) {
+        Player player = event.getPlayer();
+        Input previousInput = player.getCurrentInput();
+        boolean isJumpPress = !previousInput.isJump() && event.getInput().isJump();
+
+        if (!isJumpPress
+                || player.isOnGround()
+                || player.isFlying()
+                || player.getGameMode() == GameMode.CREATIVE
+                || player.getGameMode() == GameMode.SPECTATOR)
             return;
 
-        Player p = event.getPlayer();
-        long inAirTicks = getTicksInAir(p);
+        long inAirTicks = getTicksInAir(player);
 
-        if (p.isOnGround() || inAirTicks <= 1)
+        if (inAirTicks <= 1)
             return;
 
-        int jumpsLeft = getJumpsLeft(p);
+        int jumpsLeft = getJumpsLeft(player);
 
         if (jumpsLeft > 0) {
             Vector doubleJump = getDoubleJumpVector(event.getPlayer(), event.getInput());
-            p.setVelocity(doubleJump);
-            SD.set(p, Keys.JUMPS_LEFT, jumpsLeft - 1);
+            player.setVelocity(doubleJump);
+            SD.set(player, Keys.JUMPS_LEFT, jumpsLeft - 1);
         }
     }
 }

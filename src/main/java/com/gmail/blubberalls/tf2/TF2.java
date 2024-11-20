@@ -1,6 +1,5 @@
 package com.gmail.blubberalls.tf2;
 
-import com.gmail.blubberalls.inputhandler.InputListener;
 import com.gmail.blubberalls.simpledata.SD;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -23,7 +22,6 @@ public final class TF2 extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new Dodgeball(), this);
         Bukkit.getPluginManager().registerEvents(new Bounceable(), this);
-        Bukkit.getPluginManager().registerEvents(new InputListener(), this);
         Bukkit.getPluginManager().registerEvents(new DoubleJump(), this);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, Dodgeball::tickAll, 0L, 0L);
